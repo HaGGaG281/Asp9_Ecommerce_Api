@@ -10,18 +10,20 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Asp9_Ecommerce_Core.DTOs.Orders;
+using Mapster;
+using Asp9_Ecommerce_Core.Mapping_Profiles;
 
 namespace Asp9_Ecommerce_Infrastructure.Repositories
 {
     public class ItemsRepository : IItemsRepository
     {
         private readonly AppDbContext context;
-        private readonly IMapper mapper;
+        //private readonly IMapper mapper;
 
-        public ItemsRepository(AppDbContext context , IMapper mapper)
+        public ItemsRepository(AppDbContext context  /*IMapper mapper*/)
         {
             this.context = context;
-            this.mapper = mapper;
+            //this.mapper = mapper;
         }
 
         ///// <summary>
@@ -29,20 +31,17 @@ namespace Asp9_Ecommerce_Infrastructure.Repositories
         /// لو انا هحدد الحاجات اللي عاوزها من الريليتد داتا مش هستخدم الاوتومابر
         public async Task<IEnumerable<Item_dto>> GetItemsWithUnitsAsync()
         {
+            // استخدام الإعداد المحمل مسبقاً
+            var config = Mapping_Profile.Config;
+
             var items = await context.Items
-                .Select(x => new Item_dto
-                {
-                    Id = x.Id,
-                    name = x.name,
-                    description = x.description,
-                    price = x.price,
-                    ItemsUnits = x.ItemsUnits.Select(unit => unit.UnitCode).ToList(),
-                    Stores = x.ItemsStores.Select(store => store.Stores.name).ToList() // Retrieve only store names
-                })
-                .ToListAsync();
+                                     .ProjectToType<Item_dto>(config)
+                                     .ToListAsync();
 
             return items;
         }
+
+
 
 
 
