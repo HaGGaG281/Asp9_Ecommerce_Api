@@ -1,4 +1,4 @@
-using Asp9_Ecommerce_Core.Models;
+﻿using Asp9_Ecommerce_Core.Models;
 using Asp9_Ecommerce_Core.Interfaces;
 using Asp9_Ecommerce_Infrastructure.Repositories;
 using Asp9_Ecommerce_Infrastructure.Data;
@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Asp9_Ecommerce_Core.Mapping_Profiles;
+using Mapster;
+using MapsterMapper;
 
 namespace Asp9_Ecommerce_Api
 {
@@ -46,6 +48,22 @@ namespace Asp9_Ecommerce_Api
             builder.Services.AddScoped<IItemsRepository, ItemsRepository>();
             builder.Services.AddScoped<ICustomersRepository, CustomersRepository>();
             builder.Services.AddAutoMapper(typeof(Mapping_Profile));
+            // تسجيل AutoMapper
+            // تسجيل TypeAdapterConfig بشكل صحيح ليكون موجودًا في DI container
+            var config = TypeAdapterConfig.GlobalSettings;
+            builder.Services.AddSingleton(config);
+
+
+
+            //MappingConfig.RegisterMappings(); // قم بتطبيق الإعدادات على الـ GlobalSettings
+            // في برنامج Startup.cs أو Program.cs
+            // تهيئة Mapster مع التخصيصات
+            //var config = new TypeAdapterConfig();
+            //config.Apply(new Mapping_Profile()); // تحميل التخصيصات
+
+            //builder.Services.AddSingleton(config);  // تسجيل التخصيص في الـ DI container
+
+
 
 
             // Configure JWT Authentication
