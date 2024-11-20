@@ -1,6 +1,6 @@
 ﻿using Asp9_Ecommerce_Core.DTOs.ItemsDTO;
 using Asp9_Ecommerce_Core.Models;
-using AutoMapper;
+using Mapster;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +9,22 @@ using System.Threading.Tasks;
 
 namespace Asp9_Ecommerce_Core.Mapping_Profiles
 {
-    public class Mapping_Profile : Profile
+    // MappingProfile.cs (معدل)
+    public static class Mapping_Profile
     {
-        public Mapping_Profile()
+        private static readonly TypeAdapterConfig _config = new TypeAdapterConfig();
+
+        static Mapping_Profile()
         {
-            // ماب بين الـ Items و Item_dto
-            CreateMap<Items, Item_dto>()
-                .ForMember(dest => dest.ItemsUnits, opt => opt.MapFrom(src => src.ItemsUnits.Select(unit => unit.UnitCode).ToList()))
-                .ForMember(dest => dest.Stores, opt => opt.MapFrom(src => src.ItemsStores.Select(store => store.Stores.name).ToList()));
+            _config.NewConfig<Items, Item_dto>()
+                   .Map(dest => dest.ItemsUnits, src => src.ItemsUnits.Select(unit => unit.UnitCode).ToList()) // هنا unit هو نوع يحتوي على UnitCode
+                   .Map(dest => dest.Stores, src => src.ItemsStores.Select(store => store.Stores.name).ToList());
         }
+
+        public static TypeAdapterConfig Config => _config;
     }
+
+
+
+
 }
