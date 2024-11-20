@@ -59,6 +59,9 @@ namespace Asp9_Ecommerce_Infrastructure.Data
         public DbSet<IdentityRole<int>> Roles { get; set; }
         public DbSet<Classifications> Classifications { get; set; }
         public DbSet<ShoppingCartItem> ShoppingCartItem { get; set; }
+        public DbSet<MainGroup> MainGroup { get; set; }
+        public DbSet<SubGroup> SubGroup { get; set; }
+        public DbSet<SubGroup2> SubGroup2 { get; set; }
 
     }
 }

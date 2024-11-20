@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Asp9_Ecommerce_Infrastructure.Migrations
 {
-    public partial class createtablesandrelations : Migration
+    public partial class createmgsgsg2andrelationbetweenthemanditems : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -51,18 +51,16 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Items",
+                name: "MainGroup",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    price = table.Column<double>(type: "float", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Items", x => x.Id);
+                    table.PrimaryKey("PK_MainGroup", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -120,26 +118,21 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ItemsUnits",
+                name: "SubGroup",
                 columns: table => new
                 {
-                    ItemCode = table.Column<int>(type: "int", nullable: false),
-                    UnitCode = table.Column<int>(type: "int", nullable: false),
-                    Factor = table.Column<double>(type: "float", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MG_Id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItemsUnits", x => new { x.ItemCode, x.UnitCode });
+                    table.PrimaryKey("PK_SubGroup", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItemsUnits_Items_ItemCode",
-                        column: x => x.ItemCode,
-                        principalTable: "Items",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ItemsUnits_Units_UnitCode",
-                        column: x => x.UnitCode,
-                        principalTable: "Units",
+                        name: "FK_SubGroup_MainGroup_MG_Id",
+                        column: x => x.MG_Id,
+                        principalTable: "MainGroup",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -167,6 +160,33 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                         name: "FK_Zones_Governments_Gov_Code",
                         column: x => x.Gov_Code,
                         principalTable: "Governments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubGroup2",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SG_Id = table.Column<int>(type: "int", nullable: false),
+                    MG_Id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubGroup2", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SubGroup2_MainGroup_MG_Id",
+                        column: x => x.MG_Id,
+                        principalTable: "MainGroup",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SubGroup2_SubGroup_SG_Id",
+                        column: x => x.SG_Id,
+                        principalTable: "SubGroup",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -258,6 +278,40 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                         principalTable: "Zones",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    price = table.Column<double>(type: "float", nullable: false),
+                    MG_Id = table.Column<int>(type: "int", nullable: true),
+                    SG_Id = table.Column<int>(type: "int", nullable: false),
+                    SG2_Id = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Items_MainGroup_MG_Id",
+                        column: x => x.MG_Id,
+                        principalTable: "MainGroup",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Items_SubGroup_SG_Id",
+                        column: x => x.SG_Id,
+                        principalTable: "SubGroup",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Items_SubGroup2_SG2_Id",
+                        column: x => x.SG2_Id,
+                        principalTable: "SubGroup2",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -425,6 +479,31 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ItemsUnits",
+                columns: table => new
+                {
+                    ItemCode = table.Column<int>(type: "int", nullable: false),
+                    UnitCode = table.Column<int>(type: "int", nullable: false),
+                    Factor = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemsUnits", x => new { x.ItemCode, x.UnitCode });
+                    table.ForeignKey(
+                        name: "FK_ItemsUnits_Items_ItemCode",
+                        column: x => x.ItemCode,
+                        principalTable: "Items",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ItemsUnits_Units_UnitCode",
+                        column: x => x.UnitCode,
+                        principalTable: "Units",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ShoppingCartItem",
                 columns: table => new
                 {
@@ -576,6 +655,21 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                 column: "Cus_Id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Items_MG_Id",
+                table: "Items",
+                column: "MG_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_SG_Id",
+                table: "Items",
+                column: "SG_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_SG2_Id",
+                table: "Items",
+                column: "SG2_Id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ItemsStores_ItemId",
                 table: "ItemsStores",
                 column: "ItemId");
@@ -609,6 +703,21 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                 name: "IX_Stores_Zone_Code",
                 table: "Stores",
                 column: "Zone_Code");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubGroup_MG_Id",
+                table: "SubGroup",
+                column: "MG_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubGroup2_MG_Id",
+                table: "SubGroup2",
+                column: "MG_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubGroup2_SG_Id",
+                table: "SubGroup2",
+                column: "SG_Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Zones_City_Code",
@@ -672,13 +781,22 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "SubGroup2");
+
+            migrationBuilder.DropTable(
                 name: "Classifications");
 
             migrationBuilder.DropTable(
                 name: "Zones");
 
             migrationBuilder.DropTable(
+                name: "SubGroup");
+
+            migrationBuilder.DropTable(
                 name: "Cities");
+
+            migrationBuilder.DropTable(
+                name: "MainGroup");
 
             migrationBuilder.DropTable(
                 name: "Governments");

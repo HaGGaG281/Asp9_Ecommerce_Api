@@ -181,6 +181,15 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("MG_Id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SG2_Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SG_Id")
+                        .HasColumnType("int");
+
                     b.Property<string>("description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -193,6 +202,12 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MG_Id");
+
+                    b.HasIndex("SG2_Id");
+
+                    b.HasIndex("SG_Id");
 
                     b.ToTable("Items");
                 });
@@ -240,6 +255,23 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                     b.HasIndex("UnitCode");
 
                     b.ToTable("ItemsUnits");
+                });
+
+            modelBuilder.Entity("Asp9_Ecommerce_Core.Models.MainGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MainGroup");
                 });
 
             modelBuilder.Entity("Asp9_Ecommerce_Core.Models.ShoppingCartItem", b =>
@@ -307,6 +339,55 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                     b.HasIndex("Zone_Code");
 
                     b.ToTable("Stores");
+                });
+
+            modelBuilder.Entity("Asp9_Ecommerce_Core.Models.SubGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("MG_Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MG_Id");
+
+                    b.ToTable("SubGroup");
+                });
+
+            modelBuilder.Entity("Asp9_Ecommerce_Core.Models.SubGroup2", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("MG_Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SG_Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MG_Id");
+
+                    b.HasIndex("SG_Id");
+
+                    b.ToTable("SubGroup2");
                 });
 
             modelBuilder.Entity("Asp9_Ecommerce_Core.Models.Units", b =>
@@ -639,6 +720,29 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("Asp9_Ecommerce_Core.Models.Items", b =>
+                {
+                    b.HasOne("Asp9_Ecommerce_Core.Models.MainGroup", "MainGroup")
+                        .WithMany("Items")
+                        .HasForeignKey("MG_Id");
+
+                    b.HasOne("Asp9_Ecommerce_Core.Models.SubGroup2", "SubGroup2")
+                        .WithMany("Items")
+                        .HasForeignKey("SG2_Id");
+
+                    b.HasOne("Asp9_Ecommerce_Core.Models.SubGroup", "SubGroup")
+                        .WithMany("Items")
+                        .HasForeignKey("SG_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MainGroup");
+
+                    b.Navigation("SubGroup");
+
+                    b.Navigation("SubGroup2");
+                });
+
             modelBuilder.Entity("Asp9_Ecommerce_Core.Models.ItemsStores", b =>
                 {
                     b.HasOne("Asp9_Ecommerce_Core.Models.Items", "Items")
@@ -729,6 +833,36 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                     b.Navigation("Governments");
 
                     b.Navigation("Zones");
+                });
+
+            modelBuilder.Entity("Asp9_Ecommerce_Core.Models.SubGroup", b =>
+                {
+                    b.HasOne("Asp9_Ecommerce_Core.Models.MainGroup", "MainGroup")
+                        .WithMany("SubGroup")
+                        .HasForeignKey("MG_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MainGroup");
+                });
+
+            modelBuilder.Entity("Asp9_Ecommerce_Core.Models.SubGroup2", b =>
+                {
+                    b.HasOne("Asp9_Ecommerce_Core.Models.MainGroup", "MainGroup")
+                        .WithMany("SubGroup2")
+                        .HasForeignKey("MG_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Asp9_Ecommerce_Core.Models.SubGroup", "SubGroup")
+                        .WithMany("SubGroup2")
+                        .HasForeignKey("SG_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MainGroup");
+
+                    b.Navigation("SubGroup");
                 });
 
             modelBuilder.Entity("Asp9_Ecommerce_Core.Models.Users", b =>
@@ -875,11 +1009,32 @@ namespace Asp9_Ecommerce_Infrastructure.Migrations
                     b.Navigation("ShoppingCartItem");
                 });
 
+            modelBuilder.Entity("Asp9_Ecommerce_Core.Models.MainGroup", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("SubGroup");
+
+                    b.Navigation("SubGroup2");
+                });
+
             modelBuilder.Entity("Asp9_Ecommerce_Core.Models.Stores", b =>
                 {
                     b.Navigation("ItemsStores");
 
                     b.Navigation("ShoppingCartItem");
+                });
+
+            modelBuilder.Entity("Asp9_Ecommerce_Core.Models.SubGroup", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("SubGroup2");
+                });
+
+            modelBuilder.Entity("Asp9_Ecommerce_Core.Models.SubGroup2", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Asp9_Ecommerce_Core.Models.Units", b =>
